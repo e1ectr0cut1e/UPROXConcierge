@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">U-PROX Concierge</string>
+    <string name="url">U-PROX Web URL</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="action_retry">Retry</string>
+    <string name="status_authorizing">Authorizing…</string>
+    <string name="status_authorization_failed">Authorization error: %1$s</string>
+    <string name="status_retrieving_doors">Retrieving door list…</string>
+    <string name="status_failed_retrieving_doors">Failed to retrieve door list: %1$s</string>
+    <string name="status_failed_parsing_doors">Failed to parse door list: %1$s</string>
+    <string name="settings">Settings</string>
+    <string name="save">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="access_request_sent">Access request sent…</string>
+    <string name="access_granted">Access grated</string>
+    <string name="access_request_failed">Access request failed</string>
+</resources>

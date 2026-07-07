@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">U-PROX Concierge</string>
+    <string name="url">URL U-PROX Web</string>
+    <string name="username">Ім\'я користувача</string>
+    <string name="password">Пароль</string>
+    <string name="action_retry">Повторити</string>
+    <string name="status_authorizing">Авторизація…</string>
+    <string name="status_authorization_failed">Помилка авторизації: %1$s</string>
+    <string name="status_retrieving_doors">Отримання переліку дверей…</string>
+    <string name="status_failed_retrieving_doors">Помилка отримання переліку дверей: %1$s</string>
+    <string name="status_failed_parsing_doors">Помилка обробки переліку дверей: %1$s</string>
+    <string name="settings">Налаштування</string>
+    <string name="save">OK</string>
+    <string name="cancel">Скасувати</string>
+    <string name="access_request_sent">Запит надання доступу надіслано…</string>
+    <string name="access_granted">Доступ надано</string>
+    <string name="access_request_failed">Помилка надання доступу</string>
+</resources>
