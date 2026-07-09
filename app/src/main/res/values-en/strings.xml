@@ -7,6 +7,8 @@
     <string name="action_retry">Retry</string>
     <string name="status_authorizing">Authorizing…</string>
     <string name="status_authorization_failed">Authorization error: %1$s</string>
+    <string name="status_empty_session_id">empty SID</string>
+    <string name="status_unknown_error">unknown error</string>
     <string name="status_retrieving_doors">Retrieving door list…</string>
     <string name="status_failed_retrieving_doors">Failed to retrieve door list: %1$s</string>
     <string name="status_failed_parsing_doors">Failed to parse door list: %1$s</string>
@@ -17,3 +19,4 @@
     <string name="access_granted">Access grated</string>
     <string name="access_request_failed">Access request failed</string>
 </resources>
+

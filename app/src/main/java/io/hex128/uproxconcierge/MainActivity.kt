@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import okhttp3.Call
 import okhttp3.Callback
@@ -22,6 +23,7 @@ import java.security.MessageDigest
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var doorButtonLayout: LinearLayout
     private lateinit var snackbar: Snackbar
     private lateinit var prefs: SharedPreferences
@@ -32,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        swipeRefreshLayout = this.findViewById(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener { loadDoors() }
         doorButtonLayout = findViewById(R.id.doorButtonLayout)
         prefs = getSharedPreferences("settings", MODE_PRIVATE)
         snackbar = Snackbar.make(
@@ -193,27 +197,33 @@ class MainActivity : AppCompatActivity() {
 
     fun loadDoors(endpoint: String, user: String, pass: String) {
         runOnUiThread {
+            swipeRefreshLayout.isRefreshing = true
             snackbar.setText(R.string.status_authorizing)
             snackbar.setAction(null, null)
             snackbar.duration = Snackbar.LENGTH_INDEFINITE
             snackbar.show()
         }
         authenticate(endpoint, user, pass) { sid, exception ->
-            if (exception != null) {
+            if (exception != null || sid.isNullOrBlank()) {
+                val errorMessage = when {
+                    exception != null -> exception.message
+                    sid.isNullOrBlank() -> getString(R.string.status_empty_session_id)
+                    else -> null
+                }
+
                 runOnUiThread {
+                    swipeRefreshLayout.isRefreshing = false
                     snackbar.setText(
                         getString(
                             R.string.status_authorization_failed,
-                            exception.message
+                            errorMessage ?: getString(R.string.status_unknown_error)
                         )
                     )
-                    snackbar.setAction(R.string.action_retry, { loadDoors() })
+                    snackbar.setAction(R.string.action_retry) {
+                        loadDoors()
+                    }
                     snackbar.show()
                 }
-                return@authenticate
-            }
-
-            if (sid.isNullOrBlank()) {
                 return@authenticate
             }
 
@@ -226,6 +236,7 @@ class MainActivity : AppCompatActivity() {
             fetchDoors(endpoint, sid) { doorList, exception ->
                 if (exception != null) {
                     runOnUiThread {
+                        swipeRefreshLayout.isRefreshing = false
                         snackbar.setText(
                             getString(
                                 R.string.status_failed_retrieving_doors,
@@ -239,6 +250,7 @@ class MainActivity : AppCompatActivity() {
                     try {
                         if (doorList != null) {
                             runOnUiThread {
+                                swipeRefreshLayout.isRefreshing = false
                                 snackbar.dismiss()
                                 snackbar.setText("")
                                 snackbar.setAction(null, null)
@@ -277,6 +289,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     } catch (exception: Exception) {
                         runOnUiThread {
+                            swipeRefreshLayout.isRefreshing = false
                             snackbar.setText(
                                 getString(
                                     R.string.status_failed_parsing_doors,
@@ -306,3 +319,4 @@ class MainActivity : AppCompatActivity() {
         return step3
     }
 }
+

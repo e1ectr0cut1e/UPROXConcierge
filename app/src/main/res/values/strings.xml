@@ -7,6 +7,8 @@
     <string name="action_retry">Повторити</string>
     <string name="status_authorizing">Авторизація…</string>
     <string name="status_authorization_failed">Помилка авторизації: %1$s</string>
+    <string name="status_empty_session_id">відсутній SID</string>
+    <string name="status_unknown_error">невідома помилка</string>
     <string name="status_retrieving_doors">Отримання переліку дверей…</string>
     <string name="status_failed_retrieving_doors">Помилка отримання переліку дверей: %1$s</string>
     <string name="status_failed_parsing_doors">Помилка обробки переліку дверей: %1$s</string>
@@ -17,3 +19,4 @@
     <string name="access_granted">Доступ надано</string>
     <string name="access_request_failed">Помилка надання доступу</string>
 </resources>
+
