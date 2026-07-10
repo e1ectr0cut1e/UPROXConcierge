@@ -25,7 +25,7 @@ import java.security.MessageDigest
 class MainActivity : AppCompatActivity() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var doorButtonLayout: LinearLayout
-    private lateinit var snackbar: Snackbar
+    private lateinit var snackbar: PersistentSnackbar
     private lateinit var prefs: SharedPreferences
 
     private val http = OkHttpClient()
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         swipeRefreshLayout.setOnRefreshListener { loadDoors() }
         doorButtonLayout = findViewById(R.id.doorButtonLayout)
         prefs = getSharedPreferences("settings", MODE_PRIVATE)
-        snackbar = Snackbar.make(
+        snackbar = PersistentSnackbar.make(
             findViewById(R.id.layout),
             "",
             Snackbar.LENGTH_INDEFINITE
