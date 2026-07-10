@@ -219,10 +219,8 @@ class MainActivity : AppCompatActivity() {
                             errorMessage ?: getString(R.string.status_unknown_error)
                         )
                     )
-                    snackbar.setAction(R.string.action_retry) {
-                        loadDoors()
-                    }
-                    snackbar.show()
+                    snackbar.setAction(R.string.action_retry) { loadDoors() }
+
                 }
                 return@authenticate
             }
@@ -230,7 +228,6 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 snackbar.setText(R.string.status_retrieving_doors)
                 snackbar.setAction(null, null)
-                snackbar.show()
             }
 
             fetchDoors(endpoint, sid) { doorList, exception ->
@@ -244,61 +241,63 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                         snackbar.setAction(R.string.action_retry, { loadDoors() })
-                        snackbar.show()
                     }
-                } else {
-                    try {
-                        if (doorList != null) {
-                            runOnUiThread {
-                                swipeRefreshLayout.isRefreshing = false
+                    return@fetchDoors
+                }
+                runOnUiThread {
+                    swipeRefreshLayout.isRefreshing = false
+                }
+                try {
+                    if (doorList != null) {
+                        runOnUiThread {
+                            doorButtonLayout.removeAllViews()
+                            for (i in 0 until doorList.length()) {
+                                val door = doorList.getJSONObject(i)
+                                val btn = Button(this)
+                                btn.text = door.getString("Name")
+                                btn.isEnabled = door.getInt("HealthStatus") != 2
+                                btn.setOnClickListener {
+                                    snackbar.setText(R.string.access_request_sent)
+                                    snackbar.setAction(null, null)
+                                    snackbar.duration = Snackbar.LENGTH_SHORT
+                                    snackbar.show()
+                                    openDoor(
+                                        endpoint,
+                                        sid,
+                                        door.getInt("Token"),
+                                        { exception ->
+                                            runOnUiThread {
+                                                snackbar.setText(
+                                                    if (exception == null) {
+                                                        R.string.access_granted
+                                                    } else {
+                                                        R.string.access_request_failed
+                                                    }
+                                                )
+                                                snackbar.setAction(null, null)
+                                                snackbar.duration = Snackbar.LENGTH_SHORT
+                                                snackbar.show()
+                                            }
+                                        }
+                                    )
+                                }
+                                doorButtonLayout.addView(btn)
                                 snackbar.dismiss()
                                 snackbar.setText("")
                                 snackbar.setAction(null, null)
-                                doorButtonLayout.removeAllViews()
-                                for (i in 0 until doorList.length()) {
-                                    val door = doorList.getJSONObject(i)
-                                    val btn = Button(this)
-                                    btn.text = door.getString("Name")
-                                    btn.isEnabled = door.getInt("HealthStatus") != 2
-                                    btn.setOnClickListener {
-                                        snackbar.setText(R.string.access_request_sent)
-                                        snackbar.duration = Snackbar.LENGTH_SHORT
-                                        snackbar.show()
-                                        openDoor(
-                                            endpoint,
-                                            sid,
-                                            door.getInt("Token"),
-                                            { exception ->
-                                                runOnUiThread {
-                                                    snackbar.setText(
-                                                        if (exception == null) {
-                                                            R.string.access_granted
-                                                        } else {
-                                                            R.string.access_request_failed
-                                                        }
-                                                    )
-                                                    snackbar.duration = Snackbar.LENGTH_SHORT
-                                                    snackbar.show()
-                                                }
-                                            }
-                                        )
-                                    }
-                                    doorButtonLayout.addView(btn)
-                                }
+                                snackbar.duration = Snackbar.LENGTH_SHORT
                             }
                         }
-                    } catch (exception: Exception) {
-                        runOnUiThread {
-                            swipeRefreshLayout.isRefreshing = false
-                            snackbar.setText(
-                                getString(
-                                    R.string.status_failed_parsing_doors,
-                                    exception.message
-                                )
+                    }
+                } catch (exception: Exception) {
+                    runOnUiThread {
+                        snackbar.setText(
+                            getString(
+                                R.string.status_failed_parsing_doors,
+                                exception.message
                             )
-                            snackbar.setAction(R.string.action_retry, { loadDoors() })
-                            snackbar.show()
-                        }
+                        )
+                        snackbar.setAction(R.string.action_retry, { loadDoors() })
                     }
                 }
             }
@@ -319,4 +318,3 @@ class MainActivity : AppCompatActivity() {
         return step3
     }
 }
-
