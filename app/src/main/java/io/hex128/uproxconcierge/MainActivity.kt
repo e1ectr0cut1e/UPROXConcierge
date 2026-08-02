@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                                 exception.message
                             )
                         )
-                        snackbar.setAction(R.string.action_retry, { loadDoors() })
+                        snackbar.setAction(R.string.action_retry) { loadDoors() }
                     }
                     return@fetchDoors
                 }
@@ -121,8 +121,10 @@ class MainActivity : AppCompatActivity() {
                     if (doorList != null) {
                         runOnUiThread {
                             doorButtonLayout.removeAllViews()
-                            for (i in 0 until doorList.length()) {
-                                val door = doorList.getJSONObject(i)
+                            val sortedDoorList = (0 until doorList.length())
+                                .map{ doorList.getJSONObject(it) }
+                                .sortedBy { it.getString("Name") }
+                            for (door in sortedDoorList) {
                                 val btn = Button(this)
                                 btn.text = door.getString("Name")
                                 btn.isEnabled = door.getInt("HealthStatus") != 2
@@ -132,20 +134,21 @@ class MainActivity : AppCompatActivity() {
                                     snackbar.duration = Snackbar.LENGTH_SHORT
                                     snackbar.show()
                                     uprox.openDoor(
-                                        door.getInt("Token"), { exception ->
-                                            runOnUiThread {
-                                                snackbar.setText(
-                                                    if (exception == null) {
-                                                        R.string.access_granted
-                                                    } else {
-                                                        R.string.access_request_failed
-                                                    }
-                                                )
-                                                snackbar.setAction(null, null)
-                                                snackbar.duration = Snackbar.LENGTH_SHORT
-                                                snackbar.show()
-                                            }
-                                        })
+                                        door.getInt("Token")
+                                    ) { exception ->
+                                        runOnUiThread {
+                                            snackbar.setText(
+                                                if (exception == null) {
+                                                    R.string.access_granted
+                                                } else {
+                                                    R.string.access_request_failed
+                                                }
+                                            )
+                                            snackbar.setAction(null, null)
+                                            snackbar.duration = Snackbar.LENGTH_SHORT
+                                            snackbar.show()
+                                        }
+                                    }
                                 }
                                 doorButtonLayout.addView(btn)
                                 snackbar.dismiss()
@@ -163,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                                 exception.message
                             )
                         )
-                        snackbar.setAction(R.string.action_retry, { loadDoors() })
+                        snackbar.setAction(R.string.action_retry) { loadDoors() }
                     }
                 }
             }

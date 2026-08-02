@@ -14,8 +14,8 @@ android {
         applicationId = "io.hex128.uproxconcierge"
         minSdk = 19
         targetSdk = 34
-        versionCode = 4
-        versionName = "0.2.2"
+        versionCode = 5
+        versionName = "0.3.0"
     }
 
     buildTypes {
