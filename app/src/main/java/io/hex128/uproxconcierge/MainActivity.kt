@@ -53,6 +53,12 @@ class MainActivity : AppCompatActivity() {
         return !prefs.getString("url", "").isNullOrBlank()
     }
 
+    private fun setRefreshing(refreshing: Boolean) {
+        runOnUiThread {
+            swipeRefreshLayout.isRefreshing = refreshing
+        }
+    }
+
     private fun showPropertiesDialog() {
         val dialog = PropertiesDialog()
         dialog.onSaved = {
@@ -61,28 +67,38 @@ class MainActivity : AppCompatActivity() {
         dialog.show(supportFragmentManager, "properties")
     }
 
-    private fun loadDoors() {
-        val url = prefs.getString("url", "") ?: ""
+    private fun showOpenDoorFeedback(success: Boolean) {
+        runOnUiThread {
+            snackbar.setText(
+                if (success) {
+                    R.string.access_granted
+                } else {
+                    R.string.access_request_failed
+                }
+            )
+            snackbar.setAction(null, null)
+            snackbar.duration = Snackbar.LENGTH_SHORT
+            snackbar.show()
+        }
+    }
+
+    private fun authenticate(onResult: (Exception?) -> Unit) {
         val user = prefs.getString("user", "") ?: ""
         val password = prefs.getString("password", "") ?: ""
-        uprox = UPROXWeb(url)
         runOnUiThread {
-            swipeRefreshLayout.isRefreshing = true
             snackbar.setText(R.string.status_authorizing)
             snackbar.setAction(null, null)
             snackbar.duration = Snackbar.LENGTH_INDEFINITE
             snackbar.show()
         }
-        uprox.authenticate(user, password) { sid, exception ->
-            if (exception != null || sid.isNullOrBlank()) {
+        uprox.authenticate(user, password) { sid, authException ->
+            if (authException != null || sid.isNullOrBlank()) {
                 val errorMessage = when {
-                    exception != null -> exception.message
+                    authException != null -> authException.message
                     sid.isNullOrBlank() -> getString(R.string.status_empty_session_id)
                     else -> null
                 }
-
                 runOnUiThread {
-                    swipeRefreshLayout.isRefreshing = false
                     snackbar.setText(
                         getString(
                             R.string.status_authorization_failed,
@@ -90,20 +106,30 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                     snackbar.setAction(R.string.action_retry) { loadDoors() }
-
                 }
+            }
+            onResult(authException)
+        }
+    }
+
+    private fun loadDoors() {
+        val url = prefs.getString("url", "") ?: ""
+        uprox = UPROXWeb(url)
+        setRefreshing(true)
+        authenticate { authException ->
+            if (authException != null) {
+                setRefreshing(false)
                 return@authenticate
             }
-
             runOnUiThread {
                 snackbar.setText(R.string.status_retrieving_doors)
                 snackbar.setAction(null, null)
             }
 
             uprox.fetchDoors { doorList, exception ->
+                setRefreshing(false)
                 if (exception != null) {
                     runOnUiThread {
-                        swipeRefreshLayout.isRefreshing = false
                         snackbar.setText(
                             getString(
                                 R.string.status_failed_retrieving_doors,
@@ -114,42 +140,18 @@ class MainActivity : AppCompatActivity() {
                     }
                     return@fetchDoors
                 }
-                runOnUiThread {
-                    swipeRefreshLayout.isRefreshing = false
-                }
                 try {
                     if (doorList != null) {
                         runOnUiThread {
                             doorButtonLayout.removeAllViews()
                             val sortedDoorList = (0 until doorList.length())
-                                .map{ doorList.getJSONObject(it) }
+                                .map { doorList.getJSONObject(it) }
                                 .sortedBy { it.getString("Name") }
                             for (door in sortedDoorList) {
                                 val btn = Button(this)
                                 btn.text = door.getString("Name")
                                 btn.isEnabled = door.getInt("HealthStatus") != 2
-                                btn.setOnClickListener {
-                                    snackbar.setText(R.string.access_request_sent)
-                                    snackbar.setAction(null, null)
-                                    snackbar.duration = Snackbar.LENGTH_SHORT
-                                    snackbar.show()
-                                    uprox.openDoor(
-                                        door.getInt("Token")
-                                    ) { exception ->
-                                        runOnUiThread {
-                                            snackbar.setText(
-                                                if (exception == null) {
-                                                    R.string.access_granted
-                                                } else {
-                                                    R.string.access_request_failed
-                                                }
-                                            )
-                                            snackbar.setAction(null, null)
-                                            snackbar.duration = Snackbar.LENGTH_SHORT
-                                            snackbar.show()
-                                        }
-                                    }
-                                }
+                                btn.setOnClickListener { openDoor(door.getInt("Token")) }
                                 doorButtonLayout.addView(btn)
                                 snackbar.dismiss()
                                 snackbar.setText("")
@@ -167,6 +169,26 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                         snackbar.setAction(R.string.action_retry) { loadDoors() }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openDoor(token: Int) {
+        snackbar.setText(R.string.access_request_sent)
+        snackbar.setAction(null, null)
+        snackbar.duration = Snackbar.LENGTH_SHORT
+        snackbar.show()
+        uprox.openDoor(token) { openDoorException ->
+            if (openDoorException == null) {
+                showOpenDoorFeedback(true)
+                return@openDoor
+            }
+            authenticate { authException ->
+                if (authException == null) {
+                    uprox.openDoor(token) { openDoorException ->
+                        showOpenDoorFeedback(openDoorException == null)
                     }
                 }
             }

@@ -57,33 +57,6 @@ class UPROXWeb {
         })
     }
 
-    fun openDoor(
-        token: Int, onResult: (Exception?) -> Unit
-    ) {
-        if (sid.isNullOrBlank()) {
-            onResult(Exception("SID missing"))
-        }
-        val jsonBody = JSONObject().apply {
-            put("UserSID", sid)
-            put("Token", token)
-        }.toString()
-        val requestBody = RequestBody.create(
-            MediaType.parse("application/json"), jsonBody
-        )
-        val request = Request.Builder().url("$endpoint/json/DoorAccessIn").post(requestBody).build()
-        http.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                call.cancel()
-                onResult(e)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                response.close()
-                onResult(null)
-            }
-        })
-    }
-
     fun fetchDoors(onResult: (JSONArray?, Exception?) -> Unit) {
         if (sid.isNullOrBlank()) {
             onResult(null, Exception("SID missing"))
@@ -114,6 +87,46 @@ class UPROXWeb {
                 } catch (e: Exception) {
                     onResult(null, e)
                 }
+            }
+        })
+    }
+
+    fun openDoor(
+        token: Int, onResult: (Exception?) -> Unit
+    ) {
+        if (sid.isNullOrBlank()) {
+            onResult(Exception("SID missing"))
+        }
+        val jsonBody = JSONObject().apply {
+            put("UserSID", sid)
+            put("Token", token)
+        }.toString()
+        val requestBody = RequestBody.create(
+            MediaType.parse("application/json"), jsonBody
+        )
+        val request = Request.Builder().url("$endpoint/json/DoorAccessIn").post(requestBody).build()
+        http.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+                onResult(e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.code() != 200) {
+                    val body = response.body()?.string() ?: ""
+                    response.close()
+                    try {
+                        val errorData = JSONObject(body)
+                        // val errorCode = errorData.optInt("code", 0)
+                        val errorMessage = errorData.optString("message", "Unknown error")
+                        onResult(Exception(errorMessage))
+                    } catch (e: Exception) {
+                        onResult(e)
+                    }
+                    return
+                }
+                response.close()
+                onResult(null)
             }
         })
     }
