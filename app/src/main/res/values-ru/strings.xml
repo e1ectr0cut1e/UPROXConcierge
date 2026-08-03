@@ -18,5 +18,21 @@
     <string name="access_request_sent">Запрос предоставления доступа отправлен…</string>
     <string name="access_granted">Доступ предоставлен</string>
     <string name="access_request_failed">Ошибка предоставления доступа</string>
+    <string name="status_checking_for_updates">Проверка наличия обновлений…</string>
+    <string name="skip">Пропустить</string>
+    <string name="status_update_available">Доступно обновление</string>
+    <string name="update">Обновить</string>
+    <string name="status_downloading_update">Загрузка обновления…</string>
+    <string name="status_update_check_failed">Не удалось проверить наличие обновлений</string>
+    <string name="enable_update_check">Проверять наличие обновлений автоматически</string>
+    <string name="check_for_updates">Проверить обновления</string>
+    <string name="status_already_latest_version">Установлена новейшая версия</string>
+    <string name="untrusted_certificate">Недоверенный серификат</string>
+    <string name="certificate_trust_prompt">%1$s\nSHA-256: %2$s\n\nДоверять этому сертификату?</string>
+    <string name="certificate_trust_and_save">Доверить и сохранить</string>
+    <string name="certificate_trust_once">Доверить однократно</string>
+    <string name="clear_trusted_fingerprints">Удалить доверенные сертификаты</string>
+    <string name="status_update_download_failed">Не удалось загрузить обновление</string>
+    <string name="status_installing_update">Установка обновления…</string>
 </resources>
 

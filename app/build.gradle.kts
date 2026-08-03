@@ -14,8 +14,8 @@ android {
         applicationId = "io.hex128.uproxconcierge"
         minSdk = 19
         targetSdk = 34
-        versionCode = 6
-        versionName = "0.3.1"
+        versionCode = 7
+        versionName = "0.4.0"
     }
 
     buildTypes {
@@ -37,4 +37,5 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.material)
     implementation(libs.okhttp)
+    implementation(libs.semver)
 }

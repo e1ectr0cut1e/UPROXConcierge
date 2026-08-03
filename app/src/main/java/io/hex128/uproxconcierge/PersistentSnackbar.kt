@@ -192,6 +192,7 @@ class PersistentSnackbar private constructor(
             return makeInternal(context, view, text, duration)
         }
 
+        @SuppressLint("PrivateResource")
         private fun makeInternal(
             context: Context?,
             view: View,

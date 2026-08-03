@@ -18,5 +18,21 @@
     <string name="access_request_sent">Access request sent…</string>
     <string name="access_granted">Access grated</string>
     <string name="access_request_failed">Access request failed</string>
+    <string name="status_checking_for_updates">Checking for updates…</string>
+    <string name="skip">Skip</string>
+    <string name="status_update_available">Update available</string>
+    <string name="update">Update</string>
+    <string name="status_downloading_update">Downloading update…</string>
+    <string name="status_update_check_failed">Update check failed</string>
+    <string name="enable_update_check">Automatically check for updates</string>
+    <string name="check_for_updates">Check for updates</string>
+    <string name="status_already_latest_version">The latest version is already installed</string>
+    <string name="untrusted_certificate">Untrusted certificate</string>
+    <string name="certificate_trust_prompt">%1$s\nSHA-256: %2$s\n\nTrust this certificate?</string>
+    <string name="certificate_trust_and_save">Trust and save</string>
+    <string name="certificate_trust_once">Trust once</string>
+    <string name="clear_trusted_fingerprints">Clear trusted certificates</string>
+    <string name="status_update_download_failed">Failed to download the update</string>
+    <string name="status_installing_update">Installing the update…</string>
 </resources>
 

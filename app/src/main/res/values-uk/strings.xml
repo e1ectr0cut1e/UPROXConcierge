@@ -18,5 +18,21 @@
     <string name="access_request_sent">Запит надання доступу надіслано…</string>
     <string name="access_granted">Доступ надано</string>
     <string name="access_request_failed">Помилка надання доступу</string>
+    <string name="status_checking_for_updates">Перевірка наявності оновлень…</string>
+    <string name="skip">Пропустити</string>
+    <string name="status_update_available">Доступне оновлення</string>
+    <string name="update">Оновити</string>
+    <string name="status_downloading_update">Завантаження оновлення…</string>
+    <string name="status_update_check_failed">Не вдалося перевірити наявність оновлень</string>
+    <string name="enable_update_check">Перевіряти наявність оновлень автоматично</string>
+    <string name="check_for_updates">Перевірити оновлення</string>
+    <string name="status_already_latest_version">Встановлена найновіша версія</string>
+    <string name="untrusted_certificate">Недовірений сертифікат</string>
+    <string name="certificate_trust_prompt">%1$s\nSHA-256: %2$s\n\nДовіряти цьому сертифікату?</string>
+    <string name="certificate_trust_and_save">Довірити і зберегти</string>
+    <string name="certificate_trust_once">Довірити одноразово</string>
+    <string name="clear_trusted_fingerprints">Скинути довірені сертифікати</string>
+    <string name="status_update_download_failed">Не вдалося завантажии оновлення</string>
+    <string name="status_installing_update">Встановлення оновлення…</string>
 </resources>
 

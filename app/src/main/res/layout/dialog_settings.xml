@@ -34,4 +34,17 @@
         android:inputType="textPassword"
         android:singleLine="true" />
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/updateSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/enable_update_check" />
+
+    <Button
+        android:id="@+id/clearTrustedCertificates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/clear_trusted_fingerprints" />
+
 </LinearLayout>

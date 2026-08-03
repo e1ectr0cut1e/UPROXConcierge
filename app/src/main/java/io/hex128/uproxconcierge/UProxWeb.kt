@@ -3,7 +3,6 @@ package io.hex128.uproxconcierge
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
@@ -11,14 +10,18 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.security.MessageDigest
+import java.security.cert.X509Certificate
 
-class UPROXWeb {
-    private val http = OkHttpClient()
+class UProxWeb(
+    private val endpoint: String,
+    onUntrustedCertificate: (X509Certificate) -> Boolean
+) {
+    private val http =
+        CompatOkHttpClientWInteractiveValidation(onUntrustedCertificate).build()
     private var sid: String? = null
-    private var endpoint: String
 
-    constructor(endpoint: String) {
-        this.endpoint = endpoint
+    companion object {
+        const val SALT = "F593B01C562548C6B7A31B30884BDE53"
     }
 
     fun authenticate(
@@ -112,7 +115,7 @@ class UPROXWeb {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                if (response.code() != 200) {
+                if (!response.isSuccessful) {
                     val body = response.body()?.string() ?: ""
                     response.close()
                     try {
@@ -139,7 +142,7 @@ class UPROXWeb {
 
     private fun generatePasswordHash(password: String): String {
         val step1 = md5(password)
-        val step2 = md5(step1 + "F593B01C562548C6B7A31B30884BDE53")
+        val step2 = md5(step1 + SALT)
         val step3 = md5(step2)
         return step3
     }
