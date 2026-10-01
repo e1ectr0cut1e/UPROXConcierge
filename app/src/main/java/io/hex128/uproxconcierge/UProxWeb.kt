@@ -67,7 +67,7 @@ class UProxWeb(
         val jsonBody = JSONObject().apply {
             put("UserSID", sid)
             put("SubscriptionEnabled", false)
-            put("Limit", 16)
+            put("Limit", 0)
             put("StartToken", 0)
         }.toString()
         val requestBody = RequestBody.create(
